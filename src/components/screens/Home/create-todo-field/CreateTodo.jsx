@@ -1,8 +1,16 @@
-import {useState} from "react";
+import { useEffect, useState} from "react";
 
-const CreateTodo = ({setTodos}) => {
+const CreateTodo = ({todos,setTodos}) => {
     const [title, setTitle] = useState('')
     const [date, setDate] = useState('')
+
+    useEffect(() => {
+        const savedTodos = localStorage.getItem('todos')
+        if (savedTodos){
+            setTodos(JSON.parse(savedTodos))
+        }
+    },[setTodos])
+
 
     const handleAddTodo = () => {
         const currentDate = new Date();
@@ -10,12 +18,17 @@ const CreateTodo = ({setTodos}) => {
             id: currentDate.getTime(),
             title,
             date: currentDate.toLocaleString(),
-            isCompleted: false
+            isCompleted: false,
+            priority:''
         };
 
         setTodos(prev => [newTodo, ...prev]);
         setTitle('');
         setDate(newTodo.date);
+
+        const savedTodos = JSON.stringify([newTodo,...todos])
+        localStorage.setItem('todos', savedTodos)
+
     };
 
     return (
@@ -30,6 +43,8 @@ const CreateTodo = ({setTodos}) => {
                        }}
                                 }
                    className='bg-transparent w-full border-none outline-none'
+
+
             />
 
         </div>
